@@ -63,7 +63,6 @@ export function CurrencyComboBox() {
       setSelectedOption(userCurrency || null);
     },
     onError: (e) => {
-      console.log(e);
       toast.error("Failed to update currency", {
         id: "update-currency",
       });

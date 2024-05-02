@@ -110,7 +110,6 @@ function History({ userSettings }: { userSettings: UserSettings }) {
                     dataKey={(data) => {
                       const { year, month, day } = data;
                       const date = new Date(year, month, day || 1);
-                      console.log(date);
                       if (timeframe === "year") {
                         return date.toLocaleDateString("en-US", {
                           month: "long",

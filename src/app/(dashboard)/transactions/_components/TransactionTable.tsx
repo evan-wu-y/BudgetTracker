@@ -5,6 +5,7 @@ import { DataTableViewOptions } from "@/components/datatable/ColumnToggle";
 import { DataTableFacetedFilter } from "@/components/datatable/FacetedFilter";
 import { DataTablePagination } from "@/components/datatable/Pagination";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -27,6 +29,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   ColumnDef,
   ColumnFiltersState,
+  RowSelectionState,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -36,13 +39,19 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { download, generateCsv, mkConfig } from "export-to-csv";
-import { DownloadIcon, MoreHorizontalIcon, Trash2Icon } from "lucide-react";
+import {
+  DownloadIcon,
+  MoreHorizontalIcon,
+  Trash2Icon,
+  XIcon,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import DeleteTransactionDialog from "./DeleteTransactionDialog";
 
 function TransactionTable({ from, to }: { from: Date; to: Date }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const history = useQuery<getTransactionHistoryType>({
     queryKey: ["transactions", "history", from, to],
     queryFn: async () => {
@@ -71,13 +80,18 @@ function TransactionTable({ from, to }: { from: Date; to: Date }) {
     state: {
       sorting,
       columnFilters,
+      rowSelection,
     },
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    enableRowSelection: true,
+    onRowSelectionChange: setRowSelection,
   });
+
+  const isFiltered = table.getState().columnFilters.length > 0;
 
   const categoriesOptions = useMemo(() => {
     const categoriesMap = new Map();
@@ -97,7 +111,17 @@ function TransactionTable({ from, to }: { from: Date; to: Date }) {
   return (
     <div className="w-full">
       <div className="flex flex-wrap items-end justify-between gap-2 py-4">
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Filter transactions..."
+            value={
+              (table.getColumn("description")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn("description")?.setFilterValue(event.target.value)
+            }
+            className="h-8 w-[150px] lg:w-[250px]"
+          />
           {table.getColumn("category") && (
             <DataTableFacetedFilter
               title="Category"
@@ -114,6 +138,16 @@ function TransactionTable({ from, to }: { from: Date; to: Date }) {
               ]}
               column={table.getColumn("type")}
             />
+          )}
+          {isFiltered && (
+            <Button
+              variant="ghost"
+              onClick={() => table.resetColumnFilters()}
+              className="h-8 px-2 lg:px-3"
+            >
+              Reset
+              <XIcon className="ml-2 h-4 w-4" />
+            </Button>
           )}
         </div>
         <div className="flex flex-wrap gap-2">
@@ -193,6 +227,28 @@ const emptyData: any[] = [];
 type TransactionRow = getTransactionHistoryType[number];
 
 export const columns: ColumnDef<TransactionRow>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "category",
     header: ({ column }) => (

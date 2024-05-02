@@ -61,7 +61,6 @@ function Overview({ userSettings }: { userSettings: UserSettings }) {
                 defaultMonth={dateRange?.from}
                 selected={dateRange}
                 onSelect={(v) => {
-                  console.log(v);
                   if (!v) {
                     return;
                   }
