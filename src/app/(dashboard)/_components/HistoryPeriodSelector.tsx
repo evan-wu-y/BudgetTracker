@@ -34,7 +34,7 @@ function HistoryPeriodSelector({
   });
   return (
     <div className="flex flex-wrap items-center gap-4">
-      <SkeletonWrapper isLoading={historyPeriods.isFetching} fullWidth={false}>
+      <SkeletonWrapper isLoading={historyPeriods.isLoading} fullWidth={false}>
         <Tabs
           value={timeframe}
           onValueChange={(v) => setTimeframe(v as Timeframe)}
@@ -46,10 +46,7 @@ function HistoryPeriodSelector({
         </Tabs>
       </SkeletonWrapper>
       <div className="flex flex-wrap items-center gap-2">
-        <SkeletonWrapper
-          isLoading={historyPeriods.isFetching}
-          fullWidth={false}
-        >
+        <SkeletonWrapper isLoading={historyPeriods.isLoading} fullWidth={false}>
           <YearSelector
             period={period}
             setPeriod={setPeriod}
@@ -58,7 +55,7 @@ function HistoryPeriodSelector({
         </SkeletonWrapper>
         {timeframe === "month" && (
           <SkeletonWrapper
-            isLoading={historyPeriods.isFetching}
+            isLoading={historyPeriods.isLoading}
             fullWidth={false}
           >
             <MonthSelector period={period} setPeriod={setPeriod} />

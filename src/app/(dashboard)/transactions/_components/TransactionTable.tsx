@@ -163,7 +163,7 @@ function TransactionTable({ from, to }: { from: Date; to: Date }) {
           <DataTableViewOptions table={table} />
         </div>
       </div>
-      <SkeletonWrapper isLoading={history.isFetching}>
+      <SkeletonWrapper isLoading={history.isLoading}>
         <div className="rounded-md border">
           <Table>
             <TableHeader>
@@ -337,6 +337,7 @@ const csvConfig = mkConfig({
   fieldSeparator: ",",
   decimalSeparator: ".",
   useKeysAsHeaders: true,
+  filename: "transactions",
 });
 
 function RowActions({ transaction }: { transaction: TransactionRow }) {
