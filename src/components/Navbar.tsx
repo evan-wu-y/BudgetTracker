@@ -29,7 +29,7 @@ const items = [
 function MobileNavbar() {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="bg-background block border-separate md:hidden">
+    <div className="block border-separate bg-background md:hidden">
       <nav className="container flex items-center justify-between px-8">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
@@ -65,7 +65,7 @@ function MobileNavbar() {
 
 function DesktopNavbar() {
   return (
-    <div className="bg-background hidden border-separate border-b md:block">
+    <div className="hidden border-separate border-b bg-background md:block">
       <nav className="container flex items-center justify-between px-8">
         <div className="flex h-[80px] min-h-[60px] items-center gap-x-4">
           <Logo />
@@ -106,7 +106,7 @@ function NavbarItem({
         href={href}
         className={cn(
           buttonVariants({ variant: "ghost" }),
-          "text-muted-foreground hover:text-foreground w-full justify-start text-lg",
+          "w-full justify-start text-lg text-muted-foreground hover:text-foreground",
           isActive && "text-foreground",
         )}
         onClick={onClick}
@@ -114,7 +114,7 @@ function NavbarItem({
         {label}
       </Link>
       {isActive && (
-        <div className="bg-foreground absolute -bottom-[2px] left-1/2 hidden h-[2px] w-[80%] -translate-x-1/2 rounded-xl md:block"></div>
+        <div className="absolute -bottom-[2px] left-1/2 hidden h-[2px] w-[80%] -translate-x-1/2 rounded-xl bg-foreground md:block"></div>
       )}
     </div>
   );
